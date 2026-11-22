@@ -24,7 +24,11 @@ rewrite_url() {
   echo "$url"
 }
 
-config_entries=$(git config --get-regexp '^remote\..*\.(url|pushurl)$' || true)
+config_status=0
+config_entries=$(git config --get-regexp '^remote\..*\.(url|pushurl)$') || config_status=$?
+if [ "$config_status" -gt 1 ]; then
+  exit "$config_status"
+fi
 
 while read -r key url; do
   [ -z "$key" ] && continue
